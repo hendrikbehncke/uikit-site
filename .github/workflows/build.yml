@@ -17,6 +17,9 @@ jobs:
       packages: write
       attestations: write
       id-token: write
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -44,28 +47,6 @@ jobs:
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
 
-      - name: Build and load cache for arm64
-        uses: docker/build-push-action@v6
-        env:
-          DOCKER_BUILDKIT: 1
-        with:
-          context: .
-          platforms: linux/arm64
-          load: true
-          cache-from: type=registry,ref=image:buildcache-arm64
-          cache-to: type=registry,ref=image:buildcache-arm64,compression=zstd,mode=max
-
-      - name: Build and load cache for amd64
-        uses: docker/build-push-action@v6
-        env:
-          DOCKER_BUILDKIT: 1
-        with:
-          context: .
-          platforms: linux/amd64
-          load: true
-          cache-from: type=registry,ref=image:buildcache-amd64
-          cache-to: type=registry,ref=image:buildcache-amd64,compression=zstd,mode=max
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         env:
@@ -76,7 +57,7 @@ jobs:
             type=registry,ref=image:buildcache-arm64
             type=registry,ref=image:buildcache-amd64
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.architecture }}
           annotations: ${{ steps.meta.outputs.annotations }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
