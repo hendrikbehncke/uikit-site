@@ -53,7 +53,7 @@ jobs:
           platforms: linux/arm64
           load: true
           cache-from: type=registry,ref=image:buildcache-arm64
-          cache-to: type=type=registry,ref=image:buildcache-arm64,compression=zstd,mode=max
+          cache-to: type=registry,ref=image:buildcache-arm64,compression=zstd,mode=max
 
       - name: Build and load cache for amd64
         uses: docker/build-push-action@v6
@@ -64,7 +64,7 @@ jobs:
           platforms: linux/amd64
           load: true
           cache-from: type=registry,ref=image:buildcache-amd64
-          cache-to: type=type=registry,ref=image:buildcache-amd64,compression=zstd,mode=max
+          cache-to: type=registry,ref=image:buildcache-amd64,compression=zstd,mode=max
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
