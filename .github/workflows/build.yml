@@ -44,10 +44,37 @@ jobs:
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'develop') }}
 
-      - name: Build and push Docker image
+      - name: Build and load cache for arm64
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILDKIT: 1
         with:
           context: .
+          platforms: linux/arm64
+          load: true
+          cache-from: type=registry,ref=image:buildcache-arm64
+          cache-to: type=type=registry,ref=image:buildcache-arm64,compression=zstd,mode=max
+
+      - name: Build and load cache for amd64
+        uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILDKIT: 1
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          cache-from: type=registry,ref=image:buildcache-amd64
+          cache-to: type=type=registry,ref=image:buildcache-amd64,compression=zstd,mode=max
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILDKIT: 1
+        with:
+          context: .
+          cache-from: |
+            type=registry,ref=image:buildcache-arm64
+            type=registry,ref=image:buildcache-amd64
           push: true
           platforms: linux/amd64,linux/arm64
           annotations: ${{ steps.meta.outputs.annotations }}
