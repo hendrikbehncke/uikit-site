@@ -20,7 +20,6 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, ubuntu-24.04-arm]
-        architecture: [amd64, arm64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -53,7 +52,6 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/${{ matrix.architecture }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false # Disable provenance to avoid unknown/unknown
