@@ -58,7 +58,6 @@ jobs:
             type=registry,ref=image:buildcache-amd64
           push: true
           platforms: linux/${{ matrix.architecture }}
-          annotations: ${{ steps.meta.outputs.annotations }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false # Disable provenance to avoid unknown/unknown
